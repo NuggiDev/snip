@@ -2,25 +2,34 @@
 
 > A personal CLI command snippet manager — save, search, tag, and run your most-used terminal commands. No more Googling the same command for the 5th time.
 
-Built in C# (.NET 8), runs as a single self-contained `.exe` on Windows.
+Built in **C++**, compiled natively for maximum speed.
 
 ---
 
 ## Installation
 
-### Build from source
+### Build from source (CMake)
+
+You will need **CMake** and a C++ compiler (like MSVC, GCC, or Clang).
 
 ```powershell
 git clone https://github.com/NuggiDev/snip.git
 cd snip
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+
+# Create a build directory
+mkdir build
+cd build
+
+# Generate build files and compile
+cmake ..
+cmake --build . --config Release
 ```
 
-Then add `publish\snip.exe` to a folder in your `PATH`:
+Then add the compiled `snip.exe` (inside `build/Release` or `build/` depending on your compiler) to a folder in your `PATH`:
 
 ```powershell
 mkdir C:\Users\<you>\bin
-copy publish\snip.exe C:\Users\<you>\bin\snip.exe
+copy Release\snip.exe C:\Users\<you>\bin\snip.exe
 
 # Add to PATH permanently (run once)
 [Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";C:\Users\<you>\bin", "User")
@@ -51,14 +60,10 @@ snip help                                   Show help
 # Save a command
 snip add "netsh wlan show profile name=\"MyWiFi\" key=clear" --tag wifi --desc "show wifi password"
 
-# Save a WSL2 port forward command
-snip add "netsh interface portproxy add v4tov4 listenport=3000 listenaddress=0.0.0.0 connectport=3000 connectaddress=$(wsl hostname -I)" --tag wsl --desc "WSL2 port forward"
-
 # List all snippets
 snip list
 
 # Search by tag or keyword
-snip search wsl
 snip search netsh
 
 # Copy to clipboard
@@ -66,32 +71,30 @@ snip copy 1
 
 # Run directly
 snip run 2
-
-# Edit a snippet
-snip edit 1 --desc "Updated description"
-
-# Delete
-snip delete 3
 ```
 
 ---
 
 ## Data Storage
 
-All snippets are stored locally at:
+All snippets are stored locally in plain JSON format:
 
 ```
+# Windows
+C:\Users\<username>\.snip\snippets.json
+
+# Linux / macOS
 ~/.snip/snippets.json
 ```
 
-Plain JSON — easy to back up, version control, or share.
+Easy to back up, version control, or share.
 
 ---
 
 ## Requirements
 
-- .NET 8 SDK (to build)
-- Windows 10/11 (x64)
+- CMake (version 3.10+)
+- A C++17 compatible compiler
 
 ---
 
