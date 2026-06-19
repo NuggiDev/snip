@@ -7,9 +7,21 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+static class NativeMethods
+{
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetStdHandle(int nStdHandle);
+
+    [DllImport("kernel32.dll")]
+    public static extern bool GetConsoleMode(IntPtr h, out uint mode);
+
+    [DllImport("kernel32.dll")]
+    public static extern bool SetConsoleMode(IntPtr h, uint mode);
+}
+
 // ─── Models ──────────────────────────────────────────────────────────────────
 
-record Snippet
+public record Snippet
 {
     public int Id { get; set; }
     public string Command { get; set; } = "";
@@ -442,10 +454,6 @@ static class ArgParser
     }
 }
 
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern IntPtr GetStdHandle(int nStdHandle);
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool GetConsoleMode(IntPtr h, out uint mode);
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool SetConsoleMode(IntPtr h, uint mode);
-
 // ─── Entry Point ──────────────────────────────────────────────────────────────
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -453,9 +461,9 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 // Enable ANSI on Windows
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 {
-    var handle = GetStdHandle(-11);
-    GetConsoleMode(handle, out uint mode);
-    SetConsoleMode(handle, mode | 0x0004);
+    var handle = NativeMethods.GetStdHandle(-11);
+    NativeMethods.GetConsoleMode(handle, out uint mode);
+    NativeMethods.SetConsoleMode(handle, mode | 0x0004);
 }
 
 var (positional, flags) = ArgParser.Parse(args);
