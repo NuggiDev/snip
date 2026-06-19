@@ -442,6 +442,10 @@ static class ArgParser
     }
 }
 
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern IntPtr GetStdHandle(int nStdHandle);
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool GetConsoleMode(IntPtr h, out uint mode);
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool SetConsoleMode(IntPtr h, uint mode);
+
 // ─── Entry Point ──────────────────────────────────────────────────────────────
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -476,9 +480,3 @@ switch (command)
         Commands.Help();
         break;
 }
-
-// ─── Windows Console API ──────────────────────────────────────────────────────
-
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern IntPtr GetStdHandle(int nStdHandle);
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool GetConsoleMode(IntPtr h, out uint mode);
-[System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern bool SetConsoleMode(IntPtr h, uint mode);
