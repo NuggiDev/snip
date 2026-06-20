@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <iomanip>
+#include <sstream>
 #include "json.hpp"
 
 #ifdef _WIN32
@@ -139,10 +140,10 @@ void PrintTable(const json& snippets) {
 
     std::string sep = Ansi::Paint(Ansi::Gray,
         "  " +
-        std::string(IdW + 2, '─') + "┼" +
-        std::string(TagW + 2, '─') + "┼" +
-        std::string(CmdW + 2, '─') + "┼" +
-        std::string(DescW + 2, '─'));
+        std::string(IdW + 2, '-') + "+" +
+        std::string(TagW + 2, '-') + "+" +
+        std::string(CmdW + 2, '-') + "+" +
+        std::string(DescW + 2, '-'));
 
     std::string header =
         "  " +
@@ -174,7 +175,7 @@ void PrintTable(const json& snippets) {
     std::cout << std::endl;
 }
 
-std::string GetCurrentTime() {
+std::string GetCurrentTimeStr() {
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     std::ostringstream oss;
@@ -268,7 +269,7 @@ void CmdAdd(const Args& args) {
     
     snippet["description"] = args.flags.count("desc") ? args.flags.at("desc") : 
                              (args.flags.count("description") ? args.flags.at("description") : "");
-    snippet["createdAt"] = GetCurrentTime();
+    snippet["createdAt"] = GetCurrentTimeStr();
 
     data["snippets"].push_back(snippet);
     SaveData(data);
@@ -406,7 +407,7 @@ void CmdRun(const Args& args) {
 
     std::string cmd = target->value("command", "");
     std::cout << "\n  " << Ansi::Paint(Ansi::Gray, "Running:") << " " << Ansi::Paint(Ansi::Green, cmd) << "\n";
-    std::cout << Ansi::Paint(Ansi::Gray, "  " + std::string(60, '─')) << "\n\n";
+    std::cout << Ansi::Paint(Ansi::Gray, "  " + std::string(60, '-')) << "\n\n";
 
     int ret = system(cmd.c_str());
     (void)ret;
